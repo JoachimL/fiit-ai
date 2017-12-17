@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27128.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BodyBuildr.Api", "bodybuildr-api\BodyBuildr.Api.csproj", "{F487E87D-5AD6-476F-86DF-FBBB755B14F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bodybuildr.CommandStack", "Bodybuildr.CommandStack\Bodybuildr.CommandStack.csproj", "{90FCBB54-85BE-4C40-B88D-CA21F193A7AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bodybuildr.Domain", "Bodybuildr.Domain\Bodybuildr.Domain.csproj", "{7F57C386-0D1F-4D1B-B548-0191DBB5F7C6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "NewFolder1", "NewFolder1", "{EF515F54-979A-4BB2-9B73-2B15916EB008}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Strongr.Web", "Strongr.Web\Strongr.Web.csproj", "{CF7E167D-FD0C-49BB-B23B-E2AC900999FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BodyBuildr.EventStore", "BodyBuildr.EventStore\BodyBuildr.EventStore.csproj", "{69C832AF-264F-464F-A685-64E7360739EE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F487E87D-5AD6-476F-86DF-FBBB755B14F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F487E87D-5AD6-476F-86DF-FBBB755B14F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F487E87D-5AD6-476F-86DF-FBBB755B14F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F487E87D-5AD6-476F-86DF-FBBB755B14F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90FCBB54-85BE-4C40-B88D-CA21F193A7AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90FCBB54-85BE-4C40-B88D-CA21F193A7AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90FCBB54-85BE-4C40-B88D-CA21F193A7AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90FCBB54-85BE-4C40-B88D-CA21F193A7AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F57C386-0D1F-4D1B-B548-0191DBB5F7C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F57C386-0D1F-4D1B-B548-0191DBB5F7C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F57C386-0D1F-4D1B-B548-0191DBB5F7C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F57C386-0D1F-4D1B-B548-0191DBB5F7C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF7E167D-FD0C-49BB-B23B-E2AC900999FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF7E167D-FD0C-49BB-B23B-E2AC900999FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF7E167D-FD0C-49BB-B23B-E2AC900999FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF7E167D-FD0C-49BB-B23B-E2AC900999FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69C832AF-264F-464F-A685-64E7360739EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69C832AF-264F-464F-A685-64E7360739EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69C832AF-264F-464F-A685-64E7360739EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69C832AF-264F-464F-A685-64E7360739EE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8841B712-CDEB-4D6F-826E-71F89C1AF4DD}
+	EndGlobalSection
+EndGlobal

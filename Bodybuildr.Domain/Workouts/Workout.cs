@@ -16,12 +16,12 @@ namespace Bodybuildr.Domain.Workouts
 
         public Workout(Guid id, string userId, DateTimeOffset startDateTime)
         {
-            ApplyChange(new WorkoutStarted(id, userId, startDateTime));
+            ApplyChange(new WorkoutCreated(id, userId, startDateTime));
         }
 
         public override Guid Id => _id;
 
-        public void Apply(WorkoutStarted e)
+        public void Apply(WorkoutCreated e)
         {
             _id = e.Id;
             _startDateTime = e.StartDateTime;
@@ -29,7 +29,8 @@ namespace Bodybuildr.Domain.Workouts
         }
 
         public void ActivityCompleted(
-            Guid exerciseId,
+            Guid activityId,
+            string exerciseId,
             IEnumerable<Set> sets, 
             int rating, 
             DateTimeOffset added)
@@ -38,7 +39,7 @@ namespace Bodybuildr.Domain.Workouts
                 throw new ArgumentException("At least one set must be provided", "sets");
             if (rating < 0 || rating > 5)
                 throw new ArgumentException("Invalid rating - must be between 0 and 5.", "rating");
-            ApplyChange(new ActivityCompleted(_id, exerciseId, sets, rating, added));
+            ApplyChange(new ActivityCompleted(_id, activityId, exerciseId, _userId, sets, rating, added));
         }
     }
 }

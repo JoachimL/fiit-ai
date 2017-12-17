@@ -8,23 +8,27 @@ namespace Bodybuildr.CommandStack.Events
     {
         public ActivityCompleted(
             Guid workoutId,
-            Guid exerciseId,
+            Guid activityId,
+            string exerciseId,
+            string userId,
             IEnumerable<Set> sets,
             int rating,
             DateTimeOffset added)
         {
-            Id = workoutId;
+            WorkoutId = workoutId;
+            ActivityId = activityId;
             ExerciseId = exerciseId;
             Sets = sets;
             Rating = rating;
             Added = added;
+            UserId = userId;
         }
 
         private List<Set> _sets;
         private int Rating { get; }
-        public Guid Id { get; set; }
-        public Guid ExerciseId { get; }
-        public DateTimeOffset Added { get; set; }
+        public Guid ActivityId { get; set; }
+        public string ExerciseId { get; }
+        public DateTimeOffset Added { get; }
         public IEnumerable<Set> Sets
         {
             get
@@ -41,5 +45,7 @@ namespace Bodybuildr.CommandStack.Events
             }
         }
 
+        public Guid WorkoutId { get; }
+        public string UserId { get; }
     }
 }

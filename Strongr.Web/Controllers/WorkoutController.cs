@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using Strongr.Web.Models;
 using Strongr.Web.Models.WorkoutViewModels;
+using StrongR.ReadStack.WorkoutDetail;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace Strongr.Web.Controllers
@@ -36,18 +38,31 @@ namespace Strongr.Web.Controllers
         {
             if (!ModelState.IsValid)
                 return View(model);
-            
+
             var localTime = LocalDateTime.FromDateTime(model.StartDateTime.Value.DateTime);
             var zonedTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[model.TimeZoneName]);
-
-            var user = await _userManager.GetUserAsync(User);
+            
             var workoutId = Guid.NewGuid();
             await _mediator.Send(
                 new StartWorkout(
                     workoutId,
-                    user.Id,
+                    await GetUserId(),
                     zonedTime.ToDateTimeOffset()));
             return RedirectToAction("Detail", new { id = workoutId });
+        }
+
+        private async Task<string> GetUserId()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var userId = user.Id;
+            return userId;
+        }
+
+        public async Task<IActionResult> Detail([Required]Guid? workoutId)
+        {
+            var workout = await _mediator.Send(
+                new WorkoutDetailRequest(workoutId.Value, await GetUserId()));
+            return View(workout);
         }
     }
 }

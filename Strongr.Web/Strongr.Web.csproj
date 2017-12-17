@@ -23,9 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bodybuildr.CommandStack\Bodybuildr.CommandStack.csproj" />
     <ProjectReference Include="..\Bodybuildr.Domain\Bodybuildr.Domain.csproj" />
     <ProjectReference Include="..\BodyBuildr.EventStore\BodyBuildr.EventStore.csproj" />
+    <ProjectReference Include="..\StrongR.ReadStack\StrongR.ReadStack.csproj" />
   </ItemGroup>
 
 </Project>

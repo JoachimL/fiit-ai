@@ -7,6 +7,7 @@ using Streamstone;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -78,7 +79,13 @@ namespace BodyBuildr.EventStore
 
         static Event ToEvent(EventEntity e)
         {
-            return (Event)JsonConvert.DeserializeObject(e.Data, Type.GetType(e.Type));
+            var t = Type.GetType(e.Type);
+            if (t == null)
+            {
+                Assembly a = Assembly.GetAssembly(typeof(WorkoutCreated));
+                t = a.GetType(e.Type);
+            }
+            return (Event)JsonConvert.DeserializeObject(e.Data, t);
         }
 
         static EventData ToEventData(Event e)

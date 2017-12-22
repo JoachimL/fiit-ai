@@ -1,16 +1,33 @@
 ﻿using Bodybuildr.Domain;
 using Bodybuildr.Domain.Workouts;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Bodybuildr.Domain.Commands
 {
-    public class CompleteActivity
+    public class CompleteActivity : IRequest<CompleteActivityResponse>
     {
-        public Guid WorkoutId { get; set; }
-        public Guid ExerciseId { get; set; }
-        public Set[] Sets { get; set; }
-        public int Rating { get; set; }
+        public CompleteActivity(
+            DateTimeOffset added, 
+            Guid workoutId, 
+            string exerciseId, 
+            Set[] sets, int rating, int version)
+        {
+            Added = added;
+            WorkoutId = workoutId;
+            ExerciseId = exerciseId;
+            Sets = sets;
+            Rating = rating;
+            Version = version;
+        }
+
+        public DateTimeOffset Added { get; }
+        public Guid WorkoutId { get;  }
+        public string ExerciseId { get; }
+        public Set[] Sets { get;  }
+        public int Rating { get;  }
+        public int Version { get; }
     }
 }

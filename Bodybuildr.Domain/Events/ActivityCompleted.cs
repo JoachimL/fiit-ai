@@ -25,8 +25,8 @@ namespace Bodybuildr.CommandStack.Events
         }
 
         private List<Set> _sets;
-        private int Rating { get; }
-        public Guid ActivityId { get; set; }
+        public int Rating { get; }
+        public Guid ActivityId { get; }
         public string ExerciseId { get; }
         public DateTimeOffset Added { get; }
         public IEnumerable<Set> Sets

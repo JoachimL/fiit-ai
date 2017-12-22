@@ -39,7 +39,7 @@ namespace Strongr.Web
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
 
-            services.AddMvc();
+            services.AddMvc().AddControllersAsServices();
 
             var container = new Container();
             container.Configure(x =>

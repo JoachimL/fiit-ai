@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using Strongr.Web.Models;
 using Strongr.Web.Models.WorkoutViewModels;
+using StrongR.ReadStack.TableStorage;
 using StrongR.ReadStack.WorkoutDetail;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Strongr.Web.Controllers
@@ -18,13 +21,16 @@ namespace Strongr.Web.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IMediator _mediator;
+        private readonly ExerciseRepository _exerciseRepository;
 
         public WorkoutController(
             UserManager<ApplicationUser> userManager,
-            IMediator mediator)
+            IMediator mediator,
+            ExerciseRepository exerciseRepository)
         {
             _userManager = userManager;
             _mediator = mediator;
+            _exerciseRepository = exerciseRepository;
         }
 
         public IActionResult Create()
@@ -41,28 +47,61 @@ namespace Strongr.Web.Controllers
 
             var localTime = LocalDateTime.FromDateTime(model.StartDateTime.Value.DateTime);
             var zonedTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[model.TimeZoneName]);
-            
+
             var workoutId = Guid.NewGuid();
             await _mediator.Send(
                 new StartWorkout(
                     workoutId,
-                    await GetUserId(),
+                    _userManager.GetUserId(User),
                     zonedTime.ToDateTimeOffset()));
             return RedirectToAction("Detail", new { id = workoutId });
         }
 
-        private async Task<string> GetUserId()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            var userId = user.Id;
-            return userId;
-        }
-
-        public async Task<IActionResult> Detail([Required]Guid? workoutId)
+        public async Task<IActionResult> Detail([Required]Guid? id, Guid? activityId)
         {
             var workout = await _mediator.Send(
-                new WorkoutDetailRequest(workoutId.Value, await GetUserId()));
-            return View(workout);
+                new WorkoutDetailRequest(
+                    id.Value,
+                    _userManager.GetUserId(User),
+                    activityId ?? Guid.Empty));
+            var model = new DetailViewModel
+            {
+                StartDateTime = workout.StartedDateTime,
+                Activities = workout.Activities,
+                WorkoutId = workout.Id,
+                AllExercises = await GetExercises(),
+                ActivityId = workout.SelectedActivity.Id,
+                Rating = workout.SelectedActivity.Rating,
+                Sets = workout.SelectedActivity.Sets?.Select(s => new Set { Repetitions = s.Repetitions, Weight = s.Weight }).ToArray(),
+                Version = workout.Version
+            };
+            return View(model);
+        }
+
+        private async Task<IEnumerable<StrongR.ReadStack.Workouts.TableStorage.Exercise>> GetExercises()
+        {
+            var exercises = await _exerciseRepository.GetAllExercises();
+            return exercises.OrderBy(e => e.Name);
+        }
+
+        public async Task<IActionResult> SaveActivity(ActivityModel model)
+        {
+            if (model.ActivityId == Guid.Empty)
+            {
+                var response = await _mediator.Send(
+                    new CompleteActivity(
+                    DateTimeOffset.Now,
+                    model.WorkoutId,
+                    model.ExerciseId,
+                    CreateSets(model), model.Rating, model.Version));
+                return RedirectToAction("Detail", new { id = model.WorkoutId });
+            }
+            else throw new NotImplementedException();
+        }
+
+        private static Bodybuildr.Domain.Workouts.Set[] CreateSets(ActivityModel model)
+        {
+            return model.Sets.Where(s => s.Repetitions > 0 && s.Weight > 0).Select(s => new Bodybuildr.Domain.Workouts.Set { Repetitions = s.Repetitions, Weight = s.Weight, SystemOfMeasurement = Bodybuildr.SystemOfMeasurement.Metric }).ToArray();
         }
     }
 }

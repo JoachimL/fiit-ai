@@ -1,10 +1,23 @@
-﻿@{
+﻿@model IEnumerable<StrongR.ReadStack.Workouts.WorkoutsForUser.Workout>
+@{
     ViewData["Title"] = "Your workouts";
 }
 
 <div class="col-sm-12">
     @Html.ActionLink("Start new workout", "Create", "Workout", null, new { @class = "btn btn-primary" })
+
+    <h2>Previous workouts</h2>
+    <div class="list-group">
+        @foreach (var workout in Model)
+        {
+            <a asp-controller="Workout"
+               asp-action="Detail" asp-route-id="@workout.Id"
+               class="list-group-item">@workout.StartDateTime</a>
+        }
+    </div>
 </div>
+
+
 
 
 <nav aria-label="Page navigation">

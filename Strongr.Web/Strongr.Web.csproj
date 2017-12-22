@@ -14,6 +14,7 @@
     <PackageReference Include="NodaTime" Version="2.2.3" />
     <PackageReference Include="StructureMap" Version="4.5.3" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
+    <PackageReference Include="WindowsAzure.Storage" Version="8.7.0" />
   </ItemGroup>
 
   <ItemGroup>

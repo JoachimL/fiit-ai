@@ -1,4 +1,4 @@
-﻿using Bodybuildr.Domain.Commands;
+﻿using Bodybuildr.Domain.Workouts.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -73,7 +73,8 @@ namespace Strongr.Web.Controllers
                 ActivityId = workout.SelectedActivity.Id,
                 Rating = workout.SelectedActivity.Rating,
                 Sets = workout.SelectedActivity.Sets?.Select(s => new Set { Repetitions = s.Repetitions, Weight = s.Weight }).ToArray(),
-                Version = workout.Version
+                Version = workout.Version,
+                UserId = _userManager.GetUserId(User)
             };
             return View(model);
         }
@@ -97,6 +98,14 @@ namespace Strongr.Web.Controllers
                 return RedirectToAction("Detail", new { id = model.WorkoutId });
             }
             else throw new NotImplementedException();
+        }
+
+        public async Task<IActionResult> SaveWorkout(SaveWorkoutModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest();
+            await _mediator.Send(new UpdateStartDateTime(model.WorkoutId.Value, model.StartDateTime.Value, model.Version.Value));
+            return RedirectToAction("Detail", new { id = model.WorkoutId });
         }
 
         private static Bodybuildr.Domain.Workouts.Set[] CreateSets(ActivityModel model)

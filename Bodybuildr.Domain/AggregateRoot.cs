@@ -1,5 +1,4 @@
-﻿using Bodybuildr.CommandStack.Events;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Bodybuildr.Domain

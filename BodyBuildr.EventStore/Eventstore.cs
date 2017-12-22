@@ -1,5 +1,5 @@
-﻿using Bodybuildr.CommandStack.Events;
-using Bodybuildr.Domain;
+﻿using Bodybuildr.Domain;
+using Bodybuildr.Domain.Workouts.Events;
 using MediatR;
 using Microsoft.WindowsAzure.Storage.Table;
 using Newtonsoft.Json;
@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace BodyBuildr.EventStore

@@ -7,7 +7,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
 using Bodybuildr.Domain.CommandHandlers;
-using Bodybuildr.Domain.EventHandlers;
+using StrongR.ReadStack.EventHandlers;
 
 namespace Strongr.Web
 {

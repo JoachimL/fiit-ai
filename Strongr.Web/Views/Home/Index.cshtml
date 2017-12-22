@@ -4,8 +4,10 @@
 }
 
 <div class="col-sm-12">
-    @Html.ActionLink("Start new workout", "Create", "Workout", null, new { @class = "btn btn-primary" })
-
+    <form asp-action="Create" asp-controller="Workout" class="form-inline" id="createWorkoutForm">
+        <input type="hidden" id="startDateTime" name="StartDateTime" />
+        <button class="btn btn-primary">Start new workout</button>
+    </form>
     <h2>Previous workouts</h2>
     <div class="list-group">
         @foreach (var workout in Model)
@@ -39,3 +41,12 @@
         </li>
     </ul>
 </nav>
+
+@section Scripts {
+    <script type="text/javascript">
+        $('#createWorkoutForm').submit(function () {
+            var m = moment();
+            $('#startDateTime').val(m.format());
+        })
+    </script>
+}

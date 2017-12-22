@@ -1,8 +1,7 @@
-﻿using Bodybuildr.CommandStack.Events;
+﻿using Bodybuildr.Domain.Workouts.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Bodybuildr.Domain.Workouts
 {
@@ -28,18 +27,29 @@ namespace Bodybuildr.Domain.Workouts
             _userId = e.UserId;
         }
 
-        public void ActivityCompleted(
+        public void AddActivity(
             Guid activityId,
             string exerciseId,
-            IEnumerable<Set> sets, 
-            int rating, 
+            IEnumerable<Set> sets,
+            int rating,
             DateTimeOffset added)
         {
             if (sets == null || !sets.Any())
                 throw new ArgumentException("At least one set must be provided", "sets");
             if (rating < 0 || rating > 5)
                 throw new ArgumentException("Invalid rating - must be between 0 and 5.", "rating");
-            ApplyChange(new ActivityCompleted(_id, activityId, exerciseId, _userId, sets, rating, added));
+            ApplyChange(new ActivityCompleted(
+                _id,
+                activityId,
+                exerciseId,
+                _userId,
+                sets, rating, added));
+        }
+
+        public void UpdateStartTime(DateTimeOffset startDateTime)
+        {
+            _startDateTime = startDateTime;
+            ApplyChange(new WorkoutStartDateTimeUpdated(_userId, _id, _startDateTime));
         }
     }
 }

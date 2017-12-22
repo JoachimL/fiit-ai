@@ -29,4 +29,8 @@
     <ProjectReference Include="..\StrongR.ReadStack\StrongR.ReadStack.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\selectize\" />
+  </ItemGroup>
+
 </Project>

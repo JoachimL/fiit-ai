@@ -69,6 +69,7 @@ namespace Strongr.Web.Controllers
                 StartDateTime = workout.StartedDateTime,
                 Activities = workout.Activities,
                 WorkoutId = workout.Id,
+                ExerciseId = workout.SelectedActivity.ExerciseId,
                 AllExercises = await GetExercises(),
                 ActivityId = workout.SelectedActivity.Id,
                 Rating = workout.SelectedActivity.Rating,

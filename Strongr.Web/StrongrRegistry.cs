@@ -8,6 +8,7 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.Extensions.Configuration;
 using Bodybuildr.Domain.CommandHandlers;
 using StrongR.ReadStack.EventHandlers;
+using Strongr.Web.Commands.CopyWorkout;
 
 namespace Strongr.Web
 {
@@ -24,6 +25,7 @@ namespace Strongr.Web
             {
                 scan.AssemblyContainingType<WorkoutTableEventHandler>();
                 scan.AssemblyContainingType<WorkoutCommandHandlers>();
+                scan.AssemblyContainingType<CopyWorkoutRequestHandler>();
                 scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<,>))
                     .OnAddedPluginTypes(t=>t.Singleton());
                 scan.ConnectImplementationsToTypesClosing(typeof(IRequestHandler<>))

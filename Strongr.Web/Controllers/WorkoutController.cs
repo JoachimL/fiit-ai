@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
+using Strongr.Web.Commands.CopyWorkout;
 using Strongr.Web.Models;
 using Strongr.Web.Models.WorkoutViewModels;
 using StrongR.ReadStack.TableStorage;
@@ -45,9 +46,7 @@ namespace Strongr.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var localTime = LocalDateTime.FromDateTime(model.StartDateTime.Value.DateTime);
-            var zonedTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[model.TimeZoneName]);
-
+            ZonedDateTime zonedTime = GetZonedTime(model.StartDateTime.Value, model.TimeZoneName);
             var workoutId = Guid.NewGuid();
             await _mediator.Send(
                 new StartWorkout(
@@ -55,6 +54,13 @@ namespace Strongr.Web.Controllers
                     _userManager.GetUserId(User),
                     zonedTime.ToDateTimeOffset()));
             return RedirectToAction("Detail", new { id = workoutId });
+        }
+
+        private static ZonedDateTime GetZonedTime(DateTimeOffset dateTime, string timeZoneName)
+        {
+            var localTime = LocalDateTime.FromDateTime(dateTime.DateTime);
+            var zonedTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[timeZoneName]);
+            return zonedTime;
         }
 
         public async Task<IActionResult> Detail([Required]Guid? id, Guid? activityId)
@@ -70,6 +76,7 @@ namespace Strongr.Web.Controllers
                 Activities = workout.Activities,
                 WorkoutId = workout.Id,
                 ExerciseId = workout.SelectedActivity.ExerciseId,
+                PendingActivities = workout.PendingActivities,
                 AllExercises = await GetExercises(),
                 ActivityId = workout.SelectedActivity.Id,
                 Rating = workout.SelectedActivity.Rating,
@@ -82,7 +89,7 @@ namespace Strongr.Web.Controllers
 
         private async Task<IEnumerable<StrongR.ReadStack.Workouts.TableStorage.Exercise>> GetExercises()
         {
-            var exercises = await _exerciseRepository.GetAllExercises();
+            var exercises = await _exerciseRepository.GetAllExercisesAsync();
             return exercises.OrderBy(e => e.Name);
         }
 
@@ -112,6 +119,21 @@ namespace Strongr.Web.Controllers
         private static Bodybuildr.Domain.Workouts.Set[] CreateSets(ActivityModel model)
         {
             return model.Sets.Where(s => s.Repetitions > 0 && s.Weight > 0).Select(s => new Bodybuildr.Domain.Workouts.Set { Repetitions = s.Repetitions, Weight = s.Weight, SystemOfMeasurement = Bodybuildr.SystemOfMeasurement.Metric }).ToArray();
+        }
+
+        public async Task<IActionResult> CopyWorkout(CopyWorkoutModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            ZonedDateTime zonedTime = GetZonedTime(model.CurrentDateTime.Value, model.TimeZoneName);
+            var workoutId = Guid.NewGuid();
+            await _mediator.Send(
+                new CopyWorkoutRequest(
+                    workoutId,
+                    model.WorkoutId.Value,
+                    _userManager.GetUserId(User),
+                    zonedTime.ToDateTimeOffset()));
+            return RedirectToAction("Detail", new { id = workoutId });
         }
     }
 }

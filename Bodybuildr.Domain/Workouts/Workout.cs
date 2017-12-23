@@ -51,5 +51,10 @@ namespace Bodybuildr.Domain.Workouts
             _startDateTime = startDateTime;
             ApplyChange(new WorkoutStartDateTimeUpdated(_userId, _id, _startDateTime));
         }
+
+        public void CopyActivitiesFromWorkout(Guid workoutToCopy, IEnumerable<Activity> activities)
+        {
+            ApplyChange(new ActivitiesCopiedFromWorkout(_id, _userId, workoutToCopy, activities));
+        }
     }
 }

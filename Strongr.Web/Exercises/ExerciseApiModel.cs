@@ -1,0 +1,9 @@
+﻿namespace Strongr.Web.Exercises
+{
+    public class ExerciseApiModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Image { get; set; }
+    }
+}

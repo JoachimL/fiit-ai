@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +8,9 @@ using Strongr.Web.Data;
 using Strongr.Web.Models;
 using Strongr.Web.Services;
 using StructureMap;
+using ElCamino.AspNetCore.Identity.AzureTable;
+using ElCamino.AspNetCore.Identity.AzureTable.Model;
+using Microsoft.AspNetCore.Identity;
 
 namespace Strongr.Web
 {
@@ -23,14 +25,13 @@ namespace Strongr.Web
         
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders();
-            
-            services.AddAuthentication().AddFacebook(facebookOptions =>
+            services.AddIdentity<ApplicationUser, ElCamino.AspNetCore.Identity.AzureTable.Model.IdentityRole>()
+              .AddAzureTableStores<ApplicationDbContext>(BuildIdentityConfiguration)
+              .AddDefaultTokenProviders()
+              .CreateAzureTablesIfNotExists<ApplicationDbContext>(); //can remove after first run;
+
+      services.AddAuthentication().AddFacebook(facebookOptions =>
             {
                 facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
                 facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
@@ -51,8 +52,20 @@ namespace Strongr.Web
             return container.GetInstance<IServiceProvider>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    private IdentityConfiguration BuildIdentityConfiguration()
+    {
+      return new IdentityConfiguration
+      {
+        TablePrefix =
+          Configuration
+            .GetSection("IdentityAzureTable:IdentityConfiguration:TablePrefix").Value,
+        StorageConnectionString = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:StorageConnectionString").Value,
+        LocationMode = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:LocationMode").Value
+      };
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {

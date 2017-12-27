@@ -10,7 +10,7 @@ namespace StrongR.ReadStack.EntityPropertyConverter
     {
         public static void Serialize<TEntity>(TEntity entity, IDictionary<string, EntityProperty> results)
         {
-            foreach (var property in typeof(TEntity).GetProperties())
+            foreach (var property in entity.GetType().GetProperties())
             {
                 var attributedProperty = (EntityPropertyConverterAttribute)Attribute.GetCustomAttribute(property, typeof(EntityPropertyConverterAttribute));
                 if (attributedProperty != null)
@@ -23,7 +23,7 @@ namespace StrongR.ReadStack.EntityPropertyConverter
 
         public static void DeSerialize<TEntity>(TEntity entity, IDictionary<string, EntityProperty> properties)
         {
-            foreach (var property in typeof(TEntity).GetProperties())
+            foreach (var property in entity.GetType().GetProperties())
             {
                 var attributedProperty = (EntityPropertyConverterAttribute)Attribute.GetCustomAttribute(property, typeof(EntityPropertyConverterAttribute));
                 if (attributedProperty != null)

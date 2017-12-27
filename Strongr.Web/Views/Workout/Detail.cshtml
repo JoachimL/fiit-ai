@@ -1,4 +1,4 @@
-﻿@using System.Linq;
+@using System.Linq;
 @model Strongr.Web.Models.WorkoutViewModels.DetailViewModel
 
 @{
@@ -20,17 +20,24 @@
 
         @if (Model.Activities.Length > 0)
         {
-            <li class="divider"></li>
             <li>
-                <form method="post" class="copy-workout form-inline" asp-action="CopyWorkout">
+                <a href="#" class="submit-form" data-target="#copy-workout-form">
+                    <span class="glyphicon glyphicon-copy"></span> Copy this workout
+                </a>
+                <form method="post" id="copy-workout-form" class="copy-workout form-inline" asp-action="CopyWorkout">
                     <input name="WorkoutId" type="hidden" value="@Model.WorkoutId" />
                     <input name="CurrentDateTime" class="current-datetime" type="hidden" />
                     <input name="TimeZoneName" value="Europe/Oslo" type="hidden" />
-
-                    <button type="submit" class="btn btn-primary copy-workout">Copy this workout</button>
+                    <button type="submit" class="btn btn-primary copy-workout hidden-submit">Copy this workout</button>
                 </form>
             </li>
         }
+        <li class="divider"></li>
+        <li>
+            <a asp-action="Delete" asp-route-id="@Model.WorkoutId">
+                <span class="glyphicon glyphicon-trash"></span> Delete
+            </a>
+        </li>
     </ul>
 </div>
 
@@ -68,7 +75,7 @@ else
     <h3>Update activity</h3>
 }
 <div class="row">
-    <div class="col-sm-12">
+    <div class="col-xs-12">
         <form asp-action="SaveActivity" class="form">
             <input asp-for="WorkoutId" type="hidden" />
             <input asp-for="ActivityId" type="hidden" />
@@ -124,15 +131,17 @@ else
             </div>
             <div class="row">
                 <div class="col-xs-offset-8 col-xs-4">
-                    <button class="btn btn-primary add-set" type="button">
+                    <button class="btn btn-primary add-set pull-right" type="button">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add set
                     </button>
                 </div>
             </div>
             <div class="row">
-                <button type="submit" class="btn btn-success">
-                    <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Save
-                </button>
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-success">
+                        <span class="glyphicon glyphicon-check" aria-hidden="true"></span> Finish activity
+                    </button>
+                </div>
             </div>
         </form>
     </div>
@@ -147,7 +156,7 @@ else
             <div class="list-group">
                 @foreach (var activity in Model.PendingActivities)
                 {
-                    <a asp-action="StartPendingActivity" asp-route-id="@Model.WorkoutId" asp-route-activityId="@activity.Id" class="list-group-item d-flex justify-content-between align-items-center">
+                    <a asp-action="Detail" asp-route-id="@Model.WorkoutId" asp-route-pendingActivityId="@activity.Id" class="list-group-item d-flex justify-content-between align-items-center">
                         @activity.ExerciseName
                     </a>
                 }
@@ -197,6 +206,11 @@ else
         }
 
         $(function () {
+
+          $('a.submit-form').click(function () {
+            $($(this).attr('data-target')).submit();
+          });
+          $('.hidden-submit').hide();
 
             $('form.copy-workout').submit(function () {
                 $('form.copy-workout .current-datetime').val(moment().format())

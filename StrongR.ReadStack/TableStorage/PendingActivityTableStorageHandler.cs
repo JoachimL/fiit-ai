@@ -27,6 +27,7 @@ namespace StrongR.ReadStack.TableStorage
                     ExerciseId = x.Activity.ExerciseId,
                     Order = x.Index,
                     Sets = x.Activity.Sets,
+                    ExerciseName = x.Activity.ExerciseName
                 });
             await table.ExecuteBatchAsync(operation);
         }

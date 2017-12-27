@@ -11,7 +11,8 @@ namespace Bodybuildr.Domain.CommandHandlers
         IRequestHandler<StartWorkout>,
         IRequestHandler<CompleteActivity, CompleteActivityResponse>,
         IRequestHandler<UpdateStartDateTime>,
-        IRequestHandler<CopyActivitiesFromWorkout>
+        IRequestHandler<CopyActivitiesFromWorkout>,
+        IRequestHandler<DeleteWorkout>
     {
         private readonly IRepository<Workout> _repository;
 
@@ -52,6 +53,13 @@ namespace Bodybuildr.Domain.CommandHandlers
             var item = await _repository.GetByIdAsync(message.TargetWorkoutId);
             item.CopyActivitiesFromWorkout(message.WorkoutToCopy, message.Activities);
             await _repository.SaveAsync(item, message.Version);
+        }
+
+        public async Task Handle(DeleteWorkout message, CancellationToken cancellationToken)
+        {
+            var item = await _repository.GetByIdAsync(message.WorkoutId);
+            item.Delete();
+            await _repository.SaveAsync(item, message.OriginalVersion);
         }
     }
 }

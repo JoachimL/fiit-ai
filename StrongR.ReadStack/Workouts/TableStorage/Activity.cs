@@ -8,7 +8,7 @@ using System.Text;
 
 namespace StrongR.ReadStack.Workouts.TableStorage
 {
-    public class Activity : TableEntity
+    public class Activity : ComplexTableEntity
     {
         public Activity() { }
 
@@ -25,7 +25,7 @@ namespace StrongR.ReadStack.Workouts.TableStorage
 
         [IgnoreProperty]
         public Guid ActivityId => Guid.Parse(RowKey);
-        
+
         public string ExerciseId { get; set; }
         public DateTimeOffset Added { get; set; }
         public string UserId { get; set; }
@@ -33,19 +33,8 @@ namespace StrongR.ReadStack.Workouts.TableStorage
         public int Rating { get; set; }
 
         [EntityPropertyConverter]
-        public Set[] Sets { get; set; }
+        public Set[] Sets { get; set; } = new Set[] { new Set(), new Set(), new Set() };
 
-        public override IDictionary<string, EntityProperty> WriteEntity(OperationContext operationContext)
-        {
-            var results = base.WriteEntity(operationContext);
-            EntityPropertyConvert.Serialize(this, results);
-            return results;
-        }
 
-        public override void ReadEntity(IDictionary<string, EntityProperty> properties, OperationContext operationContext)
-        {
-            base.ReadEntity(properties, operationContext);
-            EntityPropertyConvert.DeSerialize(this, properties);
-        }
     }
 }

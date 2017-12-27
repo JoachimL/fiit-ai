@@ -18,8 +18,8 @@ namespace StrongR.ReadStack.WorkoutDetail
         private readonly PendingActivityTableStorageHandler _pendingActivityTableStorageHandler;
 
         public WorkoutDetailRequestHandler(
-            WorkoutTableHandler tableHandler, 
-            ActivityTableHandler activitytableHandler, 
+            WorkoutTableHandler tableHandler,
+            ActivityTableHandler activitytableHandler,
             PendingActivityTableStorageHandler pendingActivityTableStorageHandler
             )
         {
@@ -44,7 +44,22 @@ namespace StrongR.ReadStack.WorkoutDetail
 
         private async Task<ActivityDetail> GetActivityFor(WorkoutDetailRequest request)
         {
-            return request.ActivityId == Guid.Empty ? ActivityDetail.Empty : await GetActivityAsync(request.WorkoutId, request.ActivityId);
+            return request.ActivityId == Guid.Empty ?
+                await GetPendingActivityAsync(request.WorkoutId, request.PendingActivityId, request.UserId) :
+                await GetActivityAsync(request.WorkoutId, request.ActivityId);
+        }
+
+        private async Task<ActivityDetail> GetPendingActivityAsync(Guid workoutId, Guid pendingActivityId, string userId)
+        {
+            if (pendingActivityId == Guid.Empty)
+                return ActivityDetail.Empty;
+            var pendingActivities = await _pendingActivityTableStorageHandler.GetActivities(workoutId);
+            return pendingActivities.Where(a => a.ActivityId == pendingActivityId).Select(a =>
+              new ActivityDetail
+              {
+                  ExerciseId = a.ExerciseId,
+                  Sets = a.Sets
+              }).SingleOrDefault() ?? ActivityDetail.Empty;
         }
 
         private async Task<ActivityDetail> GetActivityAsync(Guid workoutId, Guid activityId)

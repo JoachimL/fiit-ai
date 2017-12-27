@@ -9,10 +9,10 @@ namespace StrongR.ReadStack.TableStorage
 {
     public class WorkoutTableHandler : TableHandler<Workout>
     {
-        
+
         public WorkoutTableHandler(CloudTableClient tableClient) : base(tableClient)
         {
-            
+
         }
 
         public const string WorkoutTableName = "Workouts";
@@ -25,11 +25,20 @@ namespace StrongR.ReadStack.TableStorage
         {
             var query = new TableQuery<Workout>();
             query.FilterString = TableQuery.GenerateFilterCondition(
-                nameof(Workout.PartitionKey), 
-                QueryComparisons.Equal, 
+                nameof(Workout.PartitionKey),
+                QueryComparisons.Equal,
                 userId);
             query.SelectColumns = new[] { nameof(Workout.StartDateTime) }.ToList();
             return ExecuteQueryAsync(query);
+        }
+
+        public Task DeleteAsync(Guid workoutId, string userId)
+        {
+            return Table.ExecuteAsync(TableOperation.Delete(
+                new Workout(userId, workoutId)
+                {
+                    ETag = "*"
+                }));
         }
     }
 }

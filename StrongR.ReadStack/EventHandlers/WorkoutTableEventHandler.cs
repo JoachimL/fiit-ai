@@ -12,7 +12,9 @@ namespace StrongR.ReadStack.EventHandlers
     public class WorkoutTableEventHandler :
         INotificationHandler<WorkoutCreated>,
         INotificationHandler<ActivityCompleted>,
-        INotificationHandler<WorkoutStartDateTimeUpdated>
+        INotificationHandler<WorkoutStartDateTimeUpdated>,
+        INotificationHandler<WorkoutDeleted>,
+        INotificationHandler<ActivitiesCopiedFromWorkout>
     {
         private readonly WorkoutTableHandler _workoutTableHandler;
         private readonly ActivityTableHandler _activityTableHandler;
@@ -86,6 +88,18 @@ namespace StrongR.ReadStack.EventHandlers
         {
             var workout = await GetWorkoutAsync(notification.UserId, notification.WorkoutId);
             workout.StartDateTime = notification.StartDateTime;
+            workout.Version = notification.Version;
+            await _workoutTableHandler.InsertOrReplace(workout);
+        }
+
+        public Task Handle(WorkoutDeleted notification, CancellationToken cancellationToken)
+        {
+            return _workoutTableHandler.DeleteAsync(notification.WorkoutId, notification.UserId);
+        }
+
+        public async Task Handle(ActivitiesCopiedFromWorkout notification, CancellationToken cancellationToken)
+        {
+            Workout workout = await GetWorkoutAsync(notification.UserId, notification.WorkoutId);
             workout.Version = notification.Version;
             await _workoutTableHandler.InsertOrReplace(workout);
         }

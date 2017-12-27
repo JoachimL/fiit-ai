@@ -10,6 +10,7 @@ namespace Bodybuildr.Domain.Workouts
         private Guid _id;
         private string _userId;
         private DateTimeOffset _startDateTime;
+        private bool _active = true;
 
         public Workout() { }
 
@@ -25,6 +26,11 @@ namespace Bodybuildr.Domain.Workouts
             _id = e.Id;
             _startDateTime = e.StartDateTime;
             _userId = e.UserId;
+        }
+
+        public void Apply(WorkoutDeleted e)
+        {
+            _active = false;
         }
 
         public void AddActivity(
@@ -55,6 +61,13 @@ namespace Bodybuildr.Domain.Workouts
         public void CopyActivitiesFromWorkout(Guid workoutToCopy, IEnumerable<Activity> activities)
         {
             ApplyChange(new ActivitiesCopiedFromWorkout(_id, _userId, workoutToCopy, activities));
+        }
+
+        public void Delete()
+        {
+            if (!_active)
+                throw new InvalidOperationException("Already deleted");
+            ApplyChange(new WorkoutDeleted(_id, _userId));
         }
     }
 }

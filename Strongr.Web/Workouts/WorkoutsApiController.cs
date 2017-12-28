@@ -28,7 +28,8 @@ namespace Strongr.Web.Workouts
         [HttpGet]
         public async Task<IActionResult> GetWorkoutDetails([Required]Guid? workoutId)
         {
-            var workout = await _workoutsOrchestrator.GetWorkoutDetails(_userManager.GetUserId(User), workoutId, null, null);
+            var workout = await _workoutsOrchestrator.GetWorkoutDetails(
+                _userManager.GetUserId(User) ?? "U_JOACHIM.LOVF_40GMAIL.COM", workoutId, null, null);
             if (workout == null)
                 return NotFound();
             return Ok(workout);

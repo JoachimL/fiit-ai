@@ -49,7 +49,7 @@ namespace BodyBuildr.EventStore
             {
                 await Stream.WriteAsync(stream, events.Select(ToEventData).ToArray());
             }
-            catch (ConcurrencyConflictException e)
+            catch (ConcurrencyConflictException)
             {
                 throw new ConcurrencyException();
             }

@@ -22,7 +22,7 @@ namespace Strongr.Web
         }
 
         public IConfiguration Configuration { get; }
-        
+
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
 
@@ -31,14 +31,17 @@ namespace Strongr.Web
               .AddDefaultTokenProviders()
               .CreateAzureTablesIfNotExists<ApplicationDbContext>(); //can remove after first run;
 
-      services.AddAuthentication().AddFacebook(facebookOptions =>
-            {
-                facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
-                facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
-            });
+            services.AddAuthentication().AddFacebook(facebookOptions =>
+                  {
+                      facebookOptions.AppId = Configuration["Authentication:Facebook:AppId"];
+                      facebookOptions.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
+                  });
 
             // Add application services.
             services.AddTransient<IEmailSender, EmailSender>();
+
+            services.AddCors();
+
 
             services.AddMvc().AddControllersAsServices();
 
@@ -52,20 +55,20 @@ namespace Strongr.Web
             return container.GetInstance<IServiceProvider>();
         }
 
-    private IdentityConfiguration BuildIdentityConfiguration()
-    {
-      return new IdentityConfiguration
-      {
-        TablePrefix =
-          Configuration
-            .GetSection("IdentityAzureTable:IdentityConfiguration:TablePrefix").Value,
-        StorageConnectionString = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:StorageConnectionString").Value,
-        LocationMode = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:LocationMode").Value
-      };
-    }
+        private IdentityConfiguration BuildIdentityConfiguration()
+        {
+            return new IdentityConfiguration
+            {
+                TablePrefix =
+                Configuration
+                  .GetSection("IdentityAzureTable:IdentityConfiguration:TablePrefix").Value,
+                StorageConnectionString = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:StorageConnectionString").Value,
+                LocationMode = Configuration.GetSection("IdentityAzureTable:IdentityConfiguration:LocationMode").Value
+            };
+        }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -81,6 +84,9 @@ namespace Strongr.Web
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseCors(builder =>
+                builder.WithOrigins("http://localhost:8080"));
 
             app.UseMvc(routes =>
             {

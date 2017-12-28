@@ -36,5 +36,7 @@ namespace Strongr.Web.UserExercises
                     Sets = a.Sets.Select(s => new Set { Repetitions = s.Repetitions, Weight = s.Weight }).ToArray()
                 };
         }
+
+
     }
 }

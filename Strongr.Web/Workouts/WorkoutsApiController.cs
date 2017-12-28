@@ -34,5 +34,16 @@ namespace Strongr.Web.Workouts
                 return NotFound();
             return Ok(workout);
         }
+
+        [HttpPost]
+        [Route("{workoutId}/activities")]
+        public async Task<IActionResult> AddActivity(Guid workoutId, [FromBody]ActivityModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+            model.ActivityId = Guid.Empty; // force new activity
+            model.WorkoutId = workoutId;
+            var response = await _workoutsOrchestrator.CompleteActivity(model, userId);
+            return Ok(response);
+        }
     }
 }

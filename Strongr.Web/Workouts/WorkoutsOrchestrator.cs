@@ -55,6 +55,7 @@ namespace Strongr.Web.Workouts
             var model = new DetailViewModel
             {
                 StartDateTime = workout.StartedDateTime,
+                StartDateTimeIsoFormatted = workout.StartedDateTime.ToString("o"),
                 Activities = workout.Activities,
                 WorkoutId = workout.Id,
                 ExerciseId = workout.SelectedActivity.ExerciseId,
@@ -91,7 +92,7 @@ namespace Strongr.Web.Workouts
             return workoutId;
         }
 
-        public async Task CompleteActivity(ActivityModel model, string userId)
+        public async Task<Guid> CompleteActivity(ActivityModel model, string userId)
         {
             if (model.ActivityId == Guid.Empty)
             {
@@ -102,6 +103,7 @@ namespace Strongr.Web.Workouts
                     model.WorkoutId,
                     model.ExerciseId,
                     CreateSets(model), model.Rating, model.Version));
+                return response.ActivityId;
             }
             else throw new NotImplementedException();
         }

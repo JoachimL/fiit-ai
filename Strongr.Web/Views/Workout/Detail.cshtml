@@ -105,7 +105,7 @@ else
                 </div>
                 @foreach (var set in Model.Sets.Select((x, idx) => new { Set = x, Index = idx }))
                 {
-                    <div class="row">
+                    <div class="row set-row">
                         <div class="col-xs-2"><p class="form-control-static"><strong>@set.Index</strong></p></div>
                         <div class="col-xs-5">
                             <label for="set-reps-@set.Index" class="sr-only">Repetitions</label>
@@ -188,64 +188,62 @@ else
     <script>
 
         function addSet(weight, repetitions) {
-            var setNumber = $('.sets').children().length;
+            var setNumber = $('.set-row').size() - 1;
             $('.sets').append(
-                '<div class="col-lg-3 col-sm-12 set">' +
-                '    <h4 class="set-number">Set ' + (setNumber + 1) + '</h4>' +
-                '    <div class="form-group">' +
-                '        <label for="set-reps-' + setNumber + '">Repetitions</label>' +
-                '        <input class="form-control" id="set-reps-' + setNumber + '" name="Sets[' + setNumber + '].Repetitions" size="3" value="' + repetitions + '" placeholder="Reps" type="number" step="1" />' +
-                '    </div>' +
-                '    <div class="form-group">' +
-                '        <label for="set-weight-' + setNumber + '">Weight</label>' +
-                '        <input class="form-control" id="set-weight-' + setNumber + '" name="Sets[' + setNumber + '].Weight" type="number" step="0.1" min="0" size="5" value="' + weight + '" placeholder="Weight" />' +
-                '    </div>' +
-                '</div>'
-            );
-
+                ' <div class="row set-row">'
+                + '        <div class="col-xs-2"><p class="form-control-static"><strong>' + (setNumber + 1) + '</strong></p></div>'
+                + '        <div class="col-xs-5">'
+                + '            <label for="set-reps-' + (setNumber + 1) + '" class="sr-only">Repetitions</label>'
+                + '            <input class="form-control" id="set-reps-' + (setNumber + 1) + '" name="Sets[' + (setNumber + 1) + '].Repetitions" size="3" value="' + repetitions + '" placeholder="Reps" type="number" step="1" />'
+                + '        </div>'
+                + '        <div class="col-xs-5">'
+                + '            <label for="set-weight-' + (setNumber + 1) + '" class="sr-only">Weight</label>'
+                + '            <input class="form-control" id="set-weight-' + (setNumber + 1) + '" name="Sets[' + (setNumber + 1) + '].Weight" type="number" step="0.1" min="0" size="5" value="' + weight + '" placeholder="Weight" />'
+                + '        </div>'
+                + '    </div>');
         }
 
-        $(function () {
+$(function () {
 
-          $('a.submit-form').click(function () {
-            $($(this).attr('data-target')).submit();
-          });
-          $('.hidden-submit').hide();
+    $('a.submit-form').click(function () {
+        $($(this).attr('data-target')).submit();
+    });
+    $('.hidden-submit').hide();
 
-            $('form.copy-workout').submit(function () {
-                $('form.copy-workout .current-datetime').val(moment().format())
-            })
+    $('form.copy-workout').submit(function () {
+        $('form.copy-workout .current-datetime').val(moment().format())
+    })
 
-            var startDateTime = moment($("#StartDateTime-ISO").val());
-            $('.startDateTimeheader').text(startDateTime);
-            $('.add-set').click(function () { addSet(0, 0) });
+    var startDateTime = moment($("#StartDateTime-ISO").val());
+    $('.startDateTimeheader').text(startDateTime);
+    $('.add-set').click(function () { addSet(0, 0) });
 
-            $('#startedDateTimeInput').datetimepicker({
-                format: 'YYYY/MM/DD HH:mm'
+    $('#startedDateTimeInput').datetimepicker({
+        format: 'YYYY/MM/DD HH:mm'
+    });
+    $('#startedDateTimeInput')
+        .data("DateTimePicker")
+        .date(startDateTime);
+
+    $("#exerciseSelect").selectize();
+
+    $('#exerciseSelect').change(function (event) {
+        var exerciseId = $("#exerciseSelect option:selected").val();
+
+        fetch('/api/my/exercises/' + exerciseId + '/last')
+            .then((data) => data.json())
+            .then(function (data) {
+                var sets = data && data.sets;
+                if (sets && sets.length) {
+                    $('.set-row').remove();
+                    var ii = 0;
+                    for (ii = 0; ii < sets.length; ii++) {
+                        addSet(sets[ii].weight, sets[ii].repetitions)
+                    }
+                }
             });
-            $('#startedDateTimeInput')
-                .data("DateTimePicker")
-                .date(startDateTime);
-
-            $("#exerciseSelect").selectize();
-
-            $('#exerciseSelect').change(function (event) {
-                var exerciseId = $("#exerciseSelect option:selected").val();
-
-                fetch('/api/users/@Model.UserId/exercises/' + exerciseId + '/last')
-                    .then((data) => data.json())
-                    .then(function (data) {
-                        var sets = data && data.sets;
-                        if (sets && sets.length) {
-                            $('.set-table-body').empty();
-                            var ii = 0;
-                            for (ii = 0; ii < sets.length; ii++) {
-                                addSet(sets[ii].weight, sets[ii].repetitions)
-                            }
-                        }
-                    });
-            });
-        });
+    });
+});
     </script>
 }
 

@@ -38,7 +38,7 @@ namespace Bodybuildr.Domain.CommandHandlers
                 request.Rating,
                 request.Added);
             await _repository.SaveAsync(item, request.Version);
-            return new CompleteActivityResponse { Activityid = activityId };
+            return new CompleteActivityResponse { ActivityId = activityId };
         }
 
         public async Task Handle(UpdateStartDateTime message, CancellationToken cancellationToken)

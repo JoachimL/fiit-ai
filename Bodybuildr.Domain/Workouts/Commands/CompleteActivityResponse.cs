@@ -4,6 +4,6 @@ namespace Bodybuildr.Domain.Workouts.Commands
 {
     public class CompleteActivityResponse
     {
-        public Guid Activityid { get; set; }
+        public Guid ActivityId { get; set; }
     }
 }

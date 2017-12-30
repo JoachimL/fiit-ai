@@ -11,7 +11,6 @@ namespace Strongr.Web.Models.WorkoutViewModels
     [Required]
     public string TimeZoneName { get; set; }
 
-    [Required]
     public Guid? WorkoutId { get; set; }
   }
 }

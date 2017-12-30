@@ -45,5 +45,15 @@ namespace Strongr.Web.Workouts
             var response = await _workoutsOrchestrator.CompleteActivity(model, userId);
             return Ok(response);
         }
+
+        [HttpPost]
+        [Route("{workoutId}/copy")]
+        public async Task<IActionResult> CopyWorkout(Guid workoutId, CopyWorkoutModel model)
+        {
+            var userId = _userManager.GetUserId(User);
+            model.WorkoutId = workoutId;
+            var newWorkoutId = await _workoutsOrchestrator.CopyWorkout(model, userId);
+            return Ok(new { workoutId = newWorkoutId });
+        }
     }
 }

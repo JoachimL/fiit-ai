@@ -31,6 +31,8 @@ namespace StrongR.ReadStack.WorkoutDetail
         public async Task<WorkoutDetailResponse> Handle(WorkoutDetailRequest request, CancellationToken cancellationToken)
         {
             var workout = await _tableHandler.GetWorkout(request.UserId, request.WorkoutId);
+            if (workout == null)
+                return WorkoutDetailResponse.Empty;
             return new WorkoutDetailResponse
             {
                 Activities = GetActivities(workout),

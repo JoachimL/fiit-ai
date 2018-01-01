@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.WindowsAzure.Storage.Table;
+using Strongr.Web.Authentication;
 using Strongr.Web.Models;
 using Strongr.Web.Models.WorkoutViewModels;
 using StrongR.ReadStack.TableStorage;
@@ -15,11 +16,11 @@ namespace Strongr.Web.UserExercises
     [Route("api/my/exercises/{exerciseId}/last")]
     public class UserExercisesController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserManager _userManager;
 
         private readonly LastExerciseActivityTableHandler _tableHandler;
 
-        public UserExercisesController(UserManager<ApplicationUser> userManager, LastExerciseActivityTableHandler tableHandler)
+        public UserExercisesController(IUserManager userManager, LastExerciseActivityTableHandler tableHandler)
         {
             _userManager = userManager;
             _tableHandler = tableHandler;
@@ -27,7 +28,7 @@ namespace Strongr.Web.UserExercises
 
         public async Task<Activity> GetLastActivityForExercise(string exerciseId)
         {
-            var a = await _tableHandler.Retrieve(_userManager.GetUserId(User) ?? "U_JOACHIM.LOVF_40GMAIL.COM", exerciseId);
+            var a = await _tableHandler.Retrieve(_userManager.GetUserId(User), exerciseId);
             if (a == null)
                 return new Activity();
             else

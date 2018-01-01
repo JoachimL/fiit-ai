@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using StructureMap;
 using Bodybuildr.Domain;
 using Bodybuildr.Domain.Workouts;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Bodybuildr.Domain.CommandHandlers;
 using StrongR.ReadStack.EventHandlers;
 using Strongr.Web.Commands.CopyWorkout;
+using Strongr.Web.Authentication;
 
 namespace Strongr.Web
 {
@@ -42,7 +43,11 @@ namespace Strongr.Web
             For<IEventStore>().Use<EventStore>().Singleton();
             For<CloudTableClient>().Use(x => CreateCloudTableClient(x)).Singleton();
             For<IMediator>().Use<Mediator>();
-
+#if DEBUG
+            For<IUserManager>().Use<DefaultingUserManager>().Singleton();
+#else
+            For<IUserManager>().Use<PassthroughUsermanager>().Singleton();
+#endif
         }
 
         private EventStore CreateEventStore(IContext x)

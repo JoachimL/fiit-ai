@@ -1,13 +1,16 @@
 using Bodybuildr.Domain.Workouts.Commands;
 using MediatR;
 using NodaTime;
+using Strongr.Web.Authentication;
 using Strongr.Web.Commands.CopyWorkout;
 using Strongr.Web.Models.WorkoutViewModels;
 using StrongR.ReadStack.TableStorage;
 using StrongR.ReadStack.WorkoutDetail;
+using StrongR.ReadStack.Workouts.WorkoutsForUser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Strongr.Web.Workouts
@@ -16,11 +19,13 @@ namespace Strongr.Web.Workouts
     {
         private readonly IMediator _mediator;
         private readonly ExerciseRepository _exerciseRepository;
+        private readonly IUserManager _userManager;
 
-        public WorkoutsOrchestrator(IMediator mediator, ExerciseRepository exerciseRepository)
+        public WorkoutsOrchestrator(IMediator mediator, ExerciseRepository exerciseRepository, IUserManager userManager)
         {
             _mediator = mediator;
             _exerciseRepository = exerciseRepository;
+            _userManager = userManager;
         }
 
         public async Task<Guid> CreateNewWorkout(CreateViewModel model, string userId)
@@ -34,6 +39,11 @@ namespace Strongr.Web.Workouts
                     zonedTime.ToDateTimeOffset()));
             return workoutId;
         }
+
+        public Task<WorkoutsForUserResponse> GetWorkoutsForUser(ClaimsPrincipal user)
+            => _mediator.Send(
+                new WorkoutsForUserRequest(
+                    _userManager.GetUserId(user)));
 
         private static ZonedDateTime GetZonedTime(DateTimeOffset dateTime, string timeZoneName)
         {

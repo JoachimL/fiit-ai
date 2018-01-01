@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Strongr.Web.Authentication;
 using Strongr.Web.Models;
+using Strongr.Web.Models.Workouts;
 using Strongr.Web.Models.WorkoutViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,11 +15,11 @@ namespace Strongr.Web.Workouts
     [Route("api/workouts")]
     public class WorkoutsApiController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IUserManager _userManager;
         private readonly WorkoutsOrchestrator _workoutsOrchestrator;
 
         public WorkoutsApiController(
-            UserManager<ApplicationUser> userManager,
+            IUserManager userManager,
             WorkoutsOrchestrator workoutsOrchestrator)
         {
             _userManager = userManager;
@@ -29,7 +31,7 @@ namespace Strongr.Web.Workouts
         public async Task<IActionResult> GetWorkoutDetails([Required]Guid? workoutId)
         {
             var workout = await _workoutsOrchestrator.GetWorkoutDetails(
-                _userManager.GetUserId(User) ?? "U_JOACHIM.LOVF_40GMAIL.COM", workoutId, null, null);
+                _userManager.GetUserId(User), workoutId, null, null);
             if (workout == null)
                 return NotFound();
             return Ok(workout);
@@ -54,6 +56,23 @@ namespace Strongr.Web.Workouts
             model.WorkoutId = workoutId;
             var newWorkoutId = await _workoutsOrchestrator.CopyWorkout(model, userId);
             return Ok(new { workoutId = newWorkoutId });
+        }
+
+        [HttpGet]
+        [Route("")]
+        public async Task<WorkoutsResponseModel> GetWorkouts()
+        {
+            var response = await _workoutsOrchestrator.GetWorkoutsForUser(User);
+            return new WorkoutsResponseModel
+            {
+                Workouts = response.Workouts.Select(w =>
+                    new Workout
+                    {
+                        Id = w.Id,
+                        StartDateAndTime = w.StartDateTime,
+                        DisplayStartDateAndTime = w.StartDateTime.ToString("G")
+                    }).ToArray()
+            };
         }
     }
 }

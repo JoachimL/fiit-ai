@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Strongr.Web.Models;
+using Strongr.Web.Workouts;
 using StrongR.ReadStack.Workouts.WorkoutsForUser;
 
 namespace Strongr.Web.Controllers
@@ -16,19 +17,22 @@ namespace Strongr.Web.Controllers
     {
         private readonly IMediator _mediator;
         private readonly UserManager<ApplicationUser> _userManager;
+        private WorkoutsOrchestrator _workoutsOrchestrator;
 
         public HomeController(IMediator mediator,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            WorkoutsOrchestrator workoutsOrchestrator
+            )
         {
             _mediator = mediator;
             _userManager = userManager;
+            _workoutsOrchestrator = workoutsOrchestrator;
         }
 
         [Authorize]
         public async Task<IActionResult> Index()
         {
-            var response = await _mediator.Send<WorkoutsForUserResponse>(
-                new WorkoutsForUserRequest(_userManager.GetUserId(User)));
+            var response = await _workoutsOrchestrator.GetWorkoutsForUser(User);
             return View(response.Workouts);
         }
 

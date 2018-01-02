@@ -91,14 +91,22 @@ namespace Strongr.Web.Workouts
 
         public async Task<Guid> CopyWorkout(CopyWorkoutModel model, string userId)
         {
-            ZonedDateTime zonedTime = GetZonedTime(model.CurrentDateTime.Value, model.TimeZoneName);
+            DateTimeOffset startDateTime;
+            if (!string.IsNullOrWhiteSpace(model.TimeZoneName))
+                startDateTime =
+                    GetZonedTime(
+                        model.CurrentDateTime.Value,
+                        model.TimeZoneName).ToDateTimeOffset();
+            else
+                startDateTime = model.CurrentDateTime.Value;
+
             var workoutId = Guid.NewGuid();
             await _mediator.Send(
                               new CopyWorkoutRequest(
                                   workoutId,
                                   model.WorkoutId.Value,
                                   userId,
-                                  zonedTime.ToDateTimeOffset()));
+                                  startDateTime));
             return workoutId;
         }
 

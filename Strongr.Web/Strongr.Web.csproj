@@ -27,13 +27,26 @@
   </ItemGroup>
 
   <ItemGroup>
+  <Compile Remove="frontend\**" />
+  <Content Remove="frontend\**" />
+  <EmbeddedResource Remove="frontend\**" />
+  <None Remove="frontend\**" />
+  <Content Include="Frontend\python\div-example.html" />
+  <Content Include="Frontend\python\exercises.json" />
+  <Content Include="Frontend\python\get-exercises.py" />
+  <Content Update="wwwroot\static\**\*;appsettings.json;web.config">
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+</ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Bodybuildr.Domain\Bodybuildr.Domain.csproj" />
     <ProjectReference Include="..\BodyBuildr.EventStore\BodyBuildr.EventStore.csproj" />
     <ProjectReference Include="..\StrongR.ReadStack\StrongR.ReadStack.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <Folder Include="wwwroot\selectize\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

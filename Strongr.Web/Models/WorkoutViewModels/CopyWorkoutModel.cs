@@ -8,7 +8,6 @@ namespace Strongr.Web.Models.WorkoutViewModels
     [Required]
     public DateTimeOffset? CurrentDateTime { get; set; }
 
-    [Required]
     public string TimeZoneName { get; set; }
 
     public Guid? WorkoutId { get; set; }

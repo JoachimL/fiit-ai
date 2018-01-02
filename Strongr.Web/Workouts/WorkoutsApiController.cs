@@ -50,7 +50,7 @@ namespace Strongr.Web.Workouts
 
         [HttpPost]
         [Route("{workoutId}/copy")]
-        public async Task<IActionResult> CopyWorkout(Guid workoutId, CopyWorkoutModel model)
+        public async Task<IActionResult> CopyWorkout(Guid workoutId, [FromBody]CopyWorkoutModel model)
         {
             var userId = _userManager.GetUserId(User);
             model.WorkoutId = workoutId;

@@ -11,6 +11,7 @@ using StructureMap;
 using ElCamino.AspNetCore.Identity.AzureTable;
 using ElCamino.AspNetCore.Identity.AzureTable.Model;
 using Microsoft.AspNetCore.Identity;
+using Strongr.Web.Validation;
 
 namespace Strongr.Web
 {
@@ -43,7 +44,11 @@ namespace Strongr.Web
             services.AddCors();
 
 
-            services.AddMvc().AddControllersAsServices();
+
+            services.AddMvc(setup =>
+            {
+                setup.Filters.Add(new ValidationActionFilter());
+            }).AddControllersAsServices();
 
             var container = new Container();
             container.Configure(x =>

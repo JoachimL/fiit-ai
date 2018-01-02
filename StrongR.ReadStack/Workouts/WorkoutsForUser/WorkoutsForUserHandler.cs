@@ -32,7 +32,7 @@ namespace StrongR.ReadStack.Workouts.WorkoutsForUser
                         UserId = w.PartitionKey,
                         Id = Guid.Parse(w.RowKey),
                         StartDateTime = w.StartDateTime
-                    })
+                    }).OrderByDescending(w=>w.StartDateTime)
             };
         }
     }

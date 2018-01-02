@@ -29,6 +29,7 @@ namespace StrongR.ReadStack.TableStorage
                 QueryComparisons.Equal,
                 userId);
             query.SelectColumns = new[] { nameof(Workout.StartDateTime) }.ToList();
+            
             return ExecuteQueryAsync(query);
         }
 
